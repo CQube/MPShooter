@@ -104,7 +104,7 @@ void ASGameMode::CheckAnyPlayerAlive()
 void ASGameMode::GameOver()
 {
 	EndWave();
-
+	 
 	SetWaveState(EWaveState::GameOver);
 
 	UE_LOG(LogTemp, Log, TEXT("Game over, players died!"));
