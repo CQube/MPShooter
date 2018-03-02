@@ -10,6 +10,8 @@ USHealthComponent::USHealthComponent()
 	DefaultHealth = 100.0f;
 	bIsDead = false;
 
+	TeamID = 255;
+
 	SetIsReplicated(true);
 }
 
@@ -41,7 +43,8 @@ void USHealthComponent::OnRep_Health(float OldHealth)
 void USHealthComponent::HandleTakeAnyDamage(AActor * DamagedActor, float Damage, const UDamageType * DamageType,
 	AController * InstigatedBy, AActor * DamageCauser)
 {
-	if (Damage <= 0 || IsDead())
+	if ((DamageCauser != DamagedActor && IsFriendly(DamagedActor, DamageCauser))
+		|| Damage <= 0 || IsDead())
 	{
 		return;
 	}
@@ -87,6 +90,23 @@ void USHealthComponent::Heal(float HealAmount)
 
 	UE_LOG(LogTemp, Log, TEXT("Health Changed: %s (+%s)"), *FString::SanitizeFloat(Health), *FString::SanitizeFloat(HealAmount));
 	OnHealthChanged.Broadcast(this, Health, -HealAmount, nullptr, nullptr, nullptr);
+}
+
+bool USHealthComponent::IsFriendly(AActor * ThisActor, AActor * AnotherActor)
+{
+	if (ThisActor == nullptr || AnotherActor == nullptr) {
+		// Assume Friendly
+		return true;
+	}
+	USHealthComponent* HealthComponentThis = Cast<USHealthComponent>(ThisActor->GetComponentByClass(USHealthComponent::StaticClass()));
+	USHealthComponent* HealthComponentAnother = Cast<USHealthComponent>(AnotherActor->GetComponentByClass(USHealthComponent::StaticClass()));
+
+	if (HealthComponentThis == nullptr || HealthComponentAnother == nullptr) {
+		// Assume Friendly
+		return true;
+	}
+
+	return HealthComponentThis->TeamID == HealthComponentAnother->TeamID;
 }
 
 
