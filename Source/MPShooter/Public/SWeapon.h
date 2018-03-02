@@ -78,7 +78,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float RateOfFire;
 
-	// Direived from RateOfFire
+	/* Bullet spread in degrees */
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (ClampMin=0.0f))
+	float BulletSpread;
+
+	// Derived from RateOfFire
 	float TimeBetweenShots;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
