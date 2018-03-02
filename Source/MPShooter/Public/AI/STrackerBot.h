@@ -84,10 +84,15 @@ protected:
 
 	void OnCheckNearbyBots();
 
+	/* power scale, boosted by buddies (range 1-4)*/
 	int32 PowerLevel;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+	FTimerHandle TimerHandle_RefreshPath;
+
+	void RefreshPath();
 };

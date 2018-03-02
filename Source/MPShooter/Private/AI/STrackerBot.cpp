@@ -46,7 +46,7 @@ ASTrackerBot::ASTrackerBot()
 	MovementForce = 1000.0f;
 	RequiredDistanceToTarget = 100.0f;
 	ExplosionDamage = 40.0f;
-	ExplosionRadius = 200.0f;
+	ExplosionRadius = 270.0f;
 	bExploded = false;
 	SelfDamageInterval = 0.25f;
 }
@@ -89,17 +89,43 @@ void ASTrackerBot::HandleTakeDamage(USHealthComponent * HealthComponent, float H
 
 FVector ASTrackerBot::GetNextPathPoint()
 {
-	// Hack only for single player
-	auto PlayerPawn = UGameplayStatics::GetPlayerCharacter(this, 0);
+	AActor* BestTarget = nullptr;
+	float NearestTargetDistance = FLT_MAX;
 
-	auto NavPath = UNavigationSystem::FindPathToActorSynchronously(this, GetActorLocation(), PlayerPawn);
-	
-	if (NavPath && NavPath->PathPoints.Num() > 1)
+	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; It++)
 	{
-		// Return next path point
-		return NavPath->PathPoints[1];
-	}	
+		APawn* PawnToCheck = It->Get();
+		if (PawnToCheck == nullptr || USHealthComponent::IsFriendly(this, PawnToCheck))
+		{
+			continue;
+		}
 
+		auto CheckPawnHealthComponent = Cast<USHealthComponent>(PawnToCheck->GetComponentByClass(USHealthComponent::StaticClass()));
+		if (CheckPawnHealthComponent && CheckPawnHealthComponent->GetHealth() > 0.0f)
+		{
+			float Distance = (PawnToCheck->GetActorLocation() - GetActorLocation()).Size();
+			if (Distance < NearestTargetDistance)
+			{
+				BestTarget = PawnToCheck;
+				Distance = NearestTargetDistance;
+			}
+		}
+	}
+
+	if (BestTarget != nullptr)
+	{
+		auto NavPath = UNavigationSystem::FindPathToActorSynchronously(this, GetActorLocation(), BestTarget);
+
+		GetWorldTimerManager().ClearTimer(TimerHandle_RefreshPath);
+		GetWorldTimerManager().SetTimer(TimerHandle_RefreshPath, this, &ASTrackerBot::RefreshPath, 5.0f, false);
+
+		if (NavPath && NavPath->PathPoints.Num() > 1)
+		{
+			// Return next path point
+			return NavPath->PathPoints[1];
+		}
+
+	}
 	//Failed to find path
 	return GetActorLocation();
 }
@@ -237,7 +263,7 @@ void ASTrackerBot::NotifyActorBeginOverlap(AActor * OtherActor)
 	if (!bStartedSelfDestruction && !bExploded)
 	{
 		auto PlayerPawn = Cast<ASCharacter>(OtherActor);
-		if (PlayerPawn)
+		if (PlayerPawn && !USHealthComponent::IsFriendly(OtherActor, this))
 		{
 			// We overlapped with a player
 
@@ -251,4 +277,9 @@ void ASTrackerBot::NotifyActorBeginOverlap(AActor * OtherActor)
 			UGameplayStatics::SpawnSoundAttached(SelfDestructSound, RootComponent);
 		}
 	}
+}
+
+void ASTrackerBot::RefreshPath()
+{
+	NextPathPoint = GetNextPathPoint();
 }
