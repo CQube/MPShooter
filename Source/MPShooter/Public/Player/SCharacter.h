@@ -86,4 +86,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void StopFire();
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	float GetRemoteViewPitch();
 };

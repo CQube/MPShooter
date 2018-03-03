@@ -15,6 +15,7 @@ ASCharacter::ASCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.TickInterval = 0.01f;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->bUsePawnControlRotation = true;
@@ -109,6 +110,11 @@ void ASCharacter::StopFire()
 	{
 		CurrentWeapon->StopFire();
 	}
+}
+
+float ASCharacter::GetRemoteViewPitch()
+{
+	return RemoteViewPitch * 360.0f / 255.0f;
 }
 
 
