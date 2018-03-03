@@ -9,7 +9,6 @@
 #include "Components/CapsuleComponent.h"
 #include "SHealthComponent.h"
 #include "Net/UnrealNetwork.h"
-#include "../../Public/Player/SCharacter.h"
 
 // Sets default values
 ASCharacter::ASCharacter()

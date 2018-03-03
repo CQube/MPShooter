@@ -4,6 +4,13 @@
 #include "Net/UnrealNetwork.h"
 #include "SGameMode.h"
 
+static int32 EnableFriendlyFire = 0;
+FAutoConsoleVariableRef CVAREnableFriendlyFire(
+	TEXT("COOP.EnableFriendlyFire"),
+	EnableFriendlyFire,
+	TEXT("Enable friendly fire"),
+	ECVF_Cheat);
+
 // Sets default values for this component's properties
 USHealthComponent::USHealthComponent()
 {
@@ -43,11 +50,12 @@ void USHealthComponent::OnRep_Health(float OldHealth)
 void USHealthComponent::HandleTakeAnyDamage(AActor * DamagedActor, float Damage, const UDamageType * DamageType,
 	AController * InstigatedBy, AActor * DamageCauser)
 {
-	if ((DamageCauser != DamagedActor && IsFriendly(DamagedActor, DamageCauser))
-		|| Damage <= 0 || IsDead())
-	{
+	// if friendly fire is disabled => return on damaging friendly character
+	if ((EnableFriendlyFire == 0 && IsFriendly(DamagedActor, DamageCauser)))
 		return;
-	}
+
+	if(Damage <= 0 || IsDead() && DamageCauser != DamagedActor)
+		return;
 
 	// Update health clamped
 	Health = FMath::Clamp(Health - Damage, 0.0f, DefaultHealth);
