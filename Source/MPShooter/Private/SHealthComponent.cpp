@@ -50,11 +50,11 @@ void USHealthComponent::OnRep_Health(float OldHealth)
 void USHealthComponent::HandleTakeAnyDamage(AActor * DamagedActor, float Damage, const UDamageType * DamageType,
 	AController * InstigatedBy, AActor * DamageCauser)
 {
-	// if friendly fire is disabled => return on damaging friendly character
-	if ((EnableFriendlyFire == 0 && IsFriendly(DamagedActor, DamageCauser)))
+	// if friendly fire is disabled => return on damaging friendly character  (exept self-damage)
+	if ((EnableFriendlyFire == 0 && IsFriendly(DamagedActor, DamageCauser) && DamageCauser != DamagedActor))
 		return;
 
-	if(Damage <= 0 || IsDead() && DamageCauser != DamagedActor)
+	if(Damage <= 0 || IsDead() )
 		return;
 
 	// Update health clamped
