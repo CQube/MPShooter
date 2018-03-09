@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/DecalComponent.h"
 #include "TimerManager.h"
+#include "SCharacter.h"
 
 // Sets default values
 ASPickUpActor::ASPickUpActor()
@@ -51,12 +52,16 @@ void ASPickUpActor::NotifyActorBeginOverlap(AActor * OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	//Todo: Grant a powerUp to player
-	if (PowerupInstance && Role == ROLE_Authority)
+	ASCharacter * PawnActor = Cast<ASCharacter>(OtherActor);
+	if (PawnActor != nullptr && PawnActor->IsPlayerControlled())
 	{
-		PowerupInstance->ActivatePowerup(OtherActor);
-		PowerupInstance = nullptr;
+		//Todo: Grant a powerUp to player
+		if (PowerupInstance && Role == ROLE_Authority)
+		{
+			PowerupInstance->ActivatePowerup(OtherActor);
+			PowerupInstance = nullptr;
 
-		GetWorldTimerManager().SetTimer(TimerHandle_RespawnTimer, this, &ASPickUpActor::Respawn, CooldownDuration);
+			GetWorldTimerManager().SetTimer(TimerHandle_RespawnTimer, this, &ASPickUpActor::Respawn, CooldownDuration);
+		}
 	}
 }
