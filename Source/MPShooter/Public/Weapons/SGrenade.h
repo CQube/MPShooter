@@ -9,6 +9,12 @@
 class UProjectileMovementComponent;
 class USphereComponent;
 
+
+/*
+	Grenade should be thrown by the server call
+	The damage is calculated on the server
+	Explosion fx runs on each client
+*/
 UCLASS()
 class MPSHOOTER_API ASGrenade : public AActor
 {
@@ -43,6 +49,9 @@ protected:
 
 	UFUNCTION()
 	void Explode();
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+	void MulticastExplodeFX();
 public:	
 	// Sets default values for this actor's properties
 	ASGrenade();	

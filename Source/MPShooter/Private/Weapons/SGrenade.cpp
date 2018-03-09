@@ -55,10 +55,24 @@ void ASGrenade::Explode()
 	// Trigger animation
 	if (ExplosionEffect)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionEffect, GetActorLocation(), GetActorRotation());
+		MulticastExplodeFX();
 	}
 	// Apply damage
-	UGameplayStatics::ApplyRadialDamage(GetWorld(), ExplosionDamage, GetActorLocation(), ExplosionRaduis, DamageType, TArray<AActor*>(), this, GetInstigatorController());
+
+	if (Role == ROLE_Authority)
+	{
+		UGameplayStatics::ApplyRadialDamage(GetWorld(), ExplosionDamage, GetActorLocation(), ExplosionRaduis, DamageType, TArray<AActor*>(), this, GetInstigatorController());
+	}
 	// Self-destroy
 	Destroy();
+}
+
+void ASGrenade::MulticastExplodeFX_Implementation()
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation(), GetActorRotation());
+}
+
+bool ASGrenade::MulticastExplodeFX_Validate()
+{
+	return true;
 }

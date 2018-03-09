@@ -8,61 +8,40 @@
 
 void ASGrenageLauncher::OnFire()
 {
-	if (GrenadeClass)
+	if (Role == ROLE_Authority)
 	{
-		auto WeaponOwner = GetOwner();
-
-		if (WeaponOwner)
+		if (GrenadeClass)
 		{
-			FVector EyeLocation;
-			FRotator EyeRotation;
-			WeaponOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+			auto WeaponOwner = GetOwner();
 
-			FVector ShotDirection = EyeRotation.Vector();
+			if (WeaponOwner)
+			{
+				FVector EyeLocation;
+				FRotator EyeRotation;
+				WeaponOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
-			FVector MuzzleLocation = MeshComponent->GetSocketLocation(MuzzleSocketName);
-			FRotator MuzzleRotation = MeshComponent->GetSocketRotation(MuzzleSocketName);
+				FVector ShotDirection = EyeRotation.Vector();
 
-			//Set Spawn Collision Handling Override
-			FActorSpawnParameters ActorSpawnParams;
-			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-			//ActorSpawnParams.Instigator = GetOwner();
+				FVector MuzzleLocation = MeshComponent->GetSocketLocation(MuzzleSocketName);
+				FRotator MuzzleRotation = MeshComponent->GetSocketRotation(MuzzleSocketName);
 
-			// spawn the projectile at the muzzle
-			GetWorld()->SpawnActor<AActor>(GrenadeClass, MuzzleLocation, EyeRotation, ActorSpawnParams);
+				//Set Spawn Collision Handling Override
+				FActorSpawnParameters ActorSpawnParams;
+				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+				//ActorSpawnParams.Instigator = GetOwner();
+
+				// spawn the projectile at the muzzle
+				GetWorld()->SpawnActor<AActor>(GrenadeClass, MuzzleLocation, EyeRotation, ActorSpawnParams);
+			}
 		}
 	}
-	
 	// todo play the sound if specified
 	// todo play a firing animation if specified
 }
 
 void ASGrenageLauncher::OnServerFire()
 {
-// 	if (GrenadeClass)
-// 	{
-// 		auto WeaponOwner = GetOwner();
-// 
-// 		if (WeaponOwner)
-// 		{
-// 			FVector EyeLocation;
-// 			FRotator EyeRotation;
-// 			WeaponOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
-// 
-// 			FVector ShotDirection = EyeRotation.Vector();
-// 
-// 			FVector MuzzleLocation = MeshComponent->GetSocketLocation(MuzzleSocketName);
-// 			FRotator MuzzleRotation = MeshComponent->GetSocketRotation(MuzzleSocketName);
-// 
-// 			//Set Spawn Collision Handling Override
-// 			FActorSpawnParameters ActorSpawnParams;
-// 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-// 			//ActorSpawnParams.Instigator = GetOwner();
-// 
-// 			// spawn the projectile at the muzzle
-// 			GetWorld()->SpawnActor<AActor>(GrenadeClass, MuzzleLocation, EyeRotation, ActorSpawnParams);
-// 		}
-// 	}
+	Fire();
 }
 
 
