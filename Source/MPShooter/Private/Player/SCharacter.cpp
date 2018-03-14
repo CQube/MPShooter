@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "SHealthComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Abilities/SAbilityBase.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -53,9 +54,24 @@ void ASCharacter::BeginPlay()
 			CurrentWeapon->SetOwner(this);
 			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponAttachSocketName);
 		}
+
+
+			FirstAbility = GetWorld()->SpawnActor<ASAbilityBase>(FirstAbilityClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+			if (FirstAbility)
+			{
+				FirstAbility->SetupContext(this);
+			}
+
+			SecondAbility = GetWorld()->SpawnActor<ASAbilityBase>(SecondAbilityClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+			if (SecondAbility)
+			{
+				SecondAbility->SetupContext(this);
+			}
 	}
 	
 	HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+
+
 }
 
 
@@ -137,6 +153,18 @@ void ASCharacter::OnHealthChanged(USHealthComponent * HealthComponent, float Hea
 	}
 }
 
+
+void ASCharacter::ExecuteFirstAbility()
+{
+	FirstAbility->Activate();
+}
+
+
+void ASCharacter::ExecuteSecondAbility()
+{
+	SecondAbility->Activate();
+}
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
@@ -168,6 +196,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ASCharacter::BeginZoom);
 	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
+
+	PlayerInputComponent->BindAction("Ability1", IE_Pressed, this, &ASCharacter::ExecuteFirstAbility);
+	PlayerInputComponent->BindAction("Ability2", IE_Released, this, &ASCharacter::ExecuteSecondAbility);
 }
 
 

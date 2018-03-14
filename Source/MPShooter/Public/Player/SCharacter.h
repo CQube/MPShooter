@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class USHealthComponent;
 class ASWeapon;
+class ASAbilityBase;
 
 UCLASS()
 class MPSHOOTER_API ASCharacter : public ACharacter
@@ -71,6 +72,20 @@ protected:
 	/*Pawn Died previously*/
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
 	bool bDied;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
+	TSubclassOf<ASAbilityBase> FirstAbilityClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
+	TSubclassOf<ASAbilityBase> SecondAbilityClass;
+
+	ASAbilityBase* FirstAbility;
+
+	ASAbilityBase* SecondAbility;
+
+	void ExecuteFirstAbility();
+
+	void ExecuteSecondAbility();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
