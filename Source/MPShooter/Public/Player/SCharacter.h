@@ -95,7 +95,6 @@ public:
 
 	virtual FVector GetPawnViewLocation() const override;
 
-
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void StartFire();
 
@@ -104,4 +103,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	float GetRemoteViewPitch();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player")
+	UCameraComponent* GetCameraComponent();
 };

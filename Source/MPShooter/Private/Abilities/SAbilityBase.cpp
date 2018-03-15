@@ -9,10 +9,10 @@ ASAbilityBase::ASAbilityBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CooldownDuration = 0.0f;
-	ImpactDuration = 0.0f;
+	CooldownDuration = 0.1f;
+	ImpactDuration = 0.1f;
 	bIsOnCooldown = false;
-	bIsCurrentlyExecuting = true;
+	bIsCurrentlyExecuting = false;
 }
 
 // Called when the game starts or when spawned
@@ -30,9 +30,10 @@ void ASAbilityBase::Tick(float DeltaTime)
 }
 
 
-void ASAbilityBase::SetupContext(ACharacter* OwnerCharacter)
+void ASAbilityBase::SetupContext(ASCharacter* OwnerCharacter)
 {
 	AbilityOwner = OwnerCharacter;
+	OnSetupContextFinished();
 }
 
 
@@ -47,24 +48,12 @@ void ASAbilityBase::Activate()
 }
 
 
-void ASAbilityBase::ExecuteAbility()
-{
-
-}
-
-
 void ASAbilityBase::AbilityExecutionFinished()
 {
 	GetWorldTimerManager().SetTimer(TimerHandle_Cooldown, this, &ASAbilityBase::CooldownFinished, CooldownDuration, false);
 	StopAbility();
 	bIsOnCooldown = true;
 	bIsCurrentlyExecuting = false;
-}
-
-
-void ASAbilityBase::StopAbility()
-{
-
 }
 
 

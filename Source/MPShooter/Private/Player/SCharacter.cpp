@@ -133,6 +133,11 @@ float ASCharacter::GetRemoteViewPitch()
 	return RemoteViewPitch * 360.0f / 255.0f;
 }
 
+UCameraComponent * ASCharacter::GetCameraComponent()
+{
+	return CameraComp;
+}
+
 
 void ASCharacter::OnHealthChanged(USHealthComponent * HealthComponent, float Health, float HealthDelta, const UDamageType * DamageType,
 	AController * InstigatedBy, AActor * DamageCauser)
@@ -156,13 +161,15 @@ void ASCharacter::OnHealthChanged(USHealthComponent * HealthComponent, float Hea
 
 void ASCharacter::ExecuteFirstAbility()
 {
-	FirstAbility->Activate();
+	if(FirstAbility)
+		FirstAbility->Activate();
 }
 
 
 void ASCharacter::ExecuteSecondAbility()
 {
-	SecondAbility->Activate();
+	if (SecondAbility)
+		SecondAbility->Activate();
 }
 
 // Called every frame
