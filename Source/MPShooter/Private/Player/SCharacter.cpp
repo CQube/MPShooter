@@ -55,23 +55,22 @@ void ASCharacter::BeginPlay()
 			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponAttachSocketName);
 		}
 
+		FirstAbility = GetWorld()->SpawnActor<ASAbilityBase>(FirstAbilityClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+		if (FirstAbility)
+		{
+			FirstAbility->SetOwner(this);
+			FirstAbility->SetupContext(this);
+		}
 
-			FirstAbility = GetWorld()->SpawnActor<ASAbilityBase>(FirstAbilityClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
-			if (FirstAbility)
-			{
-				FirstAbility->SetupContext(this);
-			}
-
-			SecondAbility = GetWorld()->SpawnActor<ASAbilityBase>(SecondAbilityClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
-			if (SecondAbility)
-			{
-				SecondAbility->SetupContext(this);
-			}
+		SecondAbility = GetWorld()->SpawnActor<ASAbilityBase>(SecondAbilityClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+		if (SecondAbility)
+		{
+			SecondAbility->SetOwner(this);
+			SecondAbility->SetupContext(this);
+		}
 	}
 	
 	HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
-
-
 }
 
 
@@ -226,4 +225,8 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(ASCharacter, CurrentWeapon);
 
 	DOREPLIFETIME(ASCharacter, bDied);
+
+	DOREPLIFETIME(ASCharacter, FirstAbility);
+
+	DOREPLIFETIME(ASCharacter, SecondAbility);
 }

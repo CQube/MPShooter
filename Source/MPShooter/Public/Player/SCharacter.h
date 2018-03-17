@@ -79,8 +79,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
 	TSubclassOf<ASAbilityBase> SecondAbilityClass;
 
+	UPROPERTY(Replicated)
 	ASAbilityBase* FirstAbility;
 
+	UPROPERTY(Replicated)
 	ASAbilityBase* SecondAbility;
 
 	void ExecuteFirstAbility();

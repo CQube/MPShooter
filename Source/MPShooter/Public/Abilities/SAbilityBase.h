@@ -13,7 +13,7 @@ class MPSHOOTER_API ASAbilityBase : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
 	// Sets default values for this actor's properties
 	ASAbilityBase();
 
@@ -35,12 +35,15 @@ protected:
 
 	FTimerHandle TimerHandle_Cooldown;
 
-	UPROPERTY(BlueprintReadOnly, Category = "AbilityBase")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "AbilityBase")
 	ASCharacter* AbilityOwner;
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Ability")
 	void ExecuteAbility();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerExecuteAbility();
 
 	UFUNCTION()
 	void AbilityExecutionFinished();
